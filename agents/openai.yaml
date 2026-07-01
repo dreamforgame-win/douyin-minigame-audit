@@ -1,0 +1,7 @@
+interface:
+  display_name: "抖音小游戏提审"
+  short_description: "按抖音官方规范检查小游戏提审资料"
+  default_prompt: "Use $douyin-minigame-audit to review my Douyin mini-game submission YAML and asset folder before submitting."
+
+policy:
+  allow_implicit_invocation: true
