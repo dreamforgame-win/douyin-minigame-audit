@@ -34,18 +34,48 @@ Before installing an update, preserve active audit state with `scripts/save-audi
 
 When the user only says a trigger phrase such as `启动抖音提审`, `抖音小游戏提审`, `检查抖音过审风险`, or otherwise provides no YAML/Markdown/path/materials:
 
-1. Ask whether this is a new project or existing project first: 先问用户是新项目还是更新旧项目，禁止在空输入时直接输出审核结论。
-2. Explain briefly that the audit needs a project audit file first, and offer the YAML/Markdown template.
-3. If the user says this is an old project, ask for the official project name or project nickname / 项目简称, then search saved state before asking them to refill.
-4. If the user says this is a new project, ask for the game/project name first, then ask them to fill or paste the template. Do not audit until at least basic project identity and one material source are present.
+1. Enter `Package Intake Choice` first; 禁止在空输入时直接输出审核结论。
+2. Offer the two intake methods, with `Create/select concentrated audit package` listed first and recommended.
+3. If the user insists on `Manual full YAML`, paste the complete path-based YAML from `assets/audit-input.zh.yaml` and wait for them to fill it.
+4. If the user chooses `Create/select concentrated audit package`, ask for the new or existing package directory before running the helper.
+5. After creating or selecting a package, explain the filling notes and wait until the user says the package is complete.
+6. Then continue with the previous audit workflow.
 
 Recommended first response:
 
 ```text
-我先帮你建提审档案，不会现在就下审核结论。
-这是新项目首次提审，还是旧项目版本更新/复审？
-如果是旧项目，请给我游戏全称或常用简称；如果是新项目，请先给游戏名称，我会按模板引导你补资料。
+我先帮你建提审档案，不会现在就下审核结论。你想用哪种方式准备资料？
+
+1. 创建/选择集中提审资料包（推荐）：你给我一个新建或已有的资料包目录，我补齐固定目录和 audit-input.zh.yaml，你把图标、截图、视频、资质材料放进去，再填写 YAML。
+2. 手动填写完整 YAML：我直接把完整 YAML 模板贴出来，你手动填写所有路径和字段。
+
+建议选 1，后续正式提审、预审、复审都只围绕同一个资料包，不容易散。
+如果选 1，请告诉我新建/已有资料包目录；如果坚持选 2，我会直接贴完整 YAML。
 ```
+
+## Package Intake Choice
+
+Use these two intake methods before auditing a new or empty submission:
+
+1. `Create/select concentrated audit package` (recommended): ask for the new or existing package directory, then run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File "<skill-dir>/scripts/create-audit-package.ps1" -OutputDir "<用户给出的目录>"
+```
+
+If the directory already contains `audit-input.zh.yaml`, keep that YAML and only complete the fixed directories. If it has no YAML, create one from `assets/audit-package-input.zh.yaml`.
+
+After creation, tell the user:
+
+- Put materials into the fixed directories: `图标`, `截图`, `视频封面`, `宣传视频`, `加载图`, `海报`, `构建产物`, and `资质材料`.
+- Fill `audit-input.zh.yaml` in the package root.
+- Leave legal/operations/business-owned unknowns in `待补资料`.
+- `工程项目目录路径` is optional and only used for enhanced project scanning.
+- Reply when the package is complete; only then continue to audit.
+
+2. `Manual full YAML`: paste the complete `assets/audit-input.zh.yaml` content, including all material and qualification path fields, then wait for the user to fill it. Do not shorten the official option reference.
+
+For old projects, if the user gives a project name or project nickname / 项目简称 before choosing a method, search saved state first. If no saved input matches, return to the two-method intake choice.
 
 ## Project State And Matching
 
@@ -90,12 +120,14 @@ Use `assets/audit-input.zh.yaml` as the canonical template. Accept Markdown with
 - `运营与变现`: CPA/CPT/CPM/CPS anchors, advertising game, in-game purchase game, traffic promotion, game station, Jianying template.
 - `自查说明`: known risks, intended changes, reviewer notes, unknown owner-dependent materials.
 
+Concentrated package YAML from `assets/audit-package-input.zh.yaml` intentionally omits material, qualification, package path, and build output path fields. In that flow, scan fixed directories relative to the YAML root.
+
 ## Audit Workflow
 
 1. Identify the submission type: first launch, version update, basic info change, filing, anchor video, advertising game, in-app purchase game, traffic promotion, game station, or Jianying template.
 2. Load the official norms index and map the submission type to relevant norms.
 3. Validate required fields and assets from YAML/Markdown.
-4. Inspect the asset package directory if present.
+4. Inspect the asset package directory if present. For concentrated packages, treat the YAML parent directory as the package root and scan fixed material, qualification, and build output directories even when no material paths exist in YAML.
 5. Scan the project directory only for supporting signals:
    - Unity: `ProjectSettings/ProjectVersion.txt`, `Packages/manifest.json`, `Assets/`, WebGL/minigame SDK folders, privacy/ad/payment/login SDK indicators.
    - Godot: `project.godot`, `export_presets.cfg`, `addons/`, exported web/minigame folders.

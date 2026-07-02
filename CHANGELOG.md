@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 - 2026-07-02
+
+- Add a recommended concentrated audit package intake flow before first audit results.
+- Add `assets/audit-package-input.zh.yaml` for package-based submissions with fixed material directories and full official option references.
+- Add `scripts/create-audit-package.ps1` to create the package directory, fixed material folders, qualification folders, build output folder, and root `audit-input.zh.yaml`.
+- Allow the package flow to create or select an existing package directory while preserving an existing `audit-input.zh.yaml`.
+- Keep manual full YAML as the second intake option for users who insist on path-by-path entry.
+- Update the first-trigger gate so empty trigger phrases ask for package/manual preparation first, then wait for completed input before auditing.
+
 ## 0.3.2 - 2026-07-02
 
 - Change update checks from once per local day to every skill trigger.

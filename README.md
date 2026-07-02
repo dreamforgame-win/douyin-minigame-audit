@@ -42,14 +42,45 @@ Common Chinese trigger phrases:
 帮我审核抖音小游戏
 ```
 
-第一次触发时不会立即审计（will not immediately produce an audit）。技能会先询问这是新项目还是旧项目：
+第一次触发时不会立即审计（will not immediately produce an audit）。技能会先询问使用哪种资料准备方式：
 
-- 新项目：先填写或粘贴 `assets/audit-input.zh.yaml`，至少提供游戏名称和一个资料来源。
-- 旧项目：提供游戏全称、项目简称、AppID 或内部代号，技能会优先加载已保存的项目档案。
+1. Create/select concentrated audit package（推荐）：使用新建或已有资料包目录，补齐固定目录和 `audit-input.zh.yaml`，素材和资质统一放在资料包里。
+2. Manual full YAML：直接填写完整路径版 `assets/audit-input.zh.yaml`。
+
+旧项目也可以直接提供游戏全称、项目简称、AppID 或内部代号，技能会优先加载已保存的项目档案。
 
 ## Typical Input
 
-Use the Chinese YAML template:
+Recommended for new submissions: create or select a concentrated audit package:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\create-audit-package.ps1 -OutputDir "E:\审核材料"
+```
+
+That creates:
+
+```text
+审核材料/
+  audit-input.zh.yaml
+  图标/
+  截图/
+  视频封面/
+  宣传视频/
+  加载图/
+  海报/
+  构建产物/
+  资质材料/
+```
+
+If the directory already has `audit-input.zh.yaml`, the script preserves it and only completes the fixed folder structure. If it has no YAML, the script creates one from the concentrated package template.
+
+The concentrated package YAML comes from:
+
+```text
+assets/audit-package-input.zh.yaml
+```
+
+Use the path-based Chinese YAML template only when the user insists on manually filling every path:
 
 ```text
 assets/audit-input.zh.yaml
